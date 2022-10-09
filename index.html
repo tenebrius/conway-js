@@ -4,20 +4,98 @@
 </head>
 <body>
 <div>
-    <canvas id="canvas" width="800" height="800"/>
+    <div style="display: flex; align-items: stretch">
+        <div style="flex-shrink: 0; flex-grow: 1; min-height: 100vh; background:#eee; position: relative">
+            <canvas id="canvas" width="1200" height="1200" style="border:1px solid #ddd; background: white"></canvas>
+            <div style="position: absolute; right:16px; top:16px">
+                <div>fps: <span id="actual-fps">0</span></div>
+                <div id="status"></div>
+            </div>
+        </div>
+        <div style="width: 200px; min-height: 100vh; padding: 16px; border-left: 1px solid #ddd; flex-shrink: 0; flex-grow: 0">
+
+
+            <div>
+                <button id="resume">Resume</button>
+                <button id="pause">Pause</button>
+                <button id="next-step">Next Step</button>
+            </div>
+            <div>
+                <button id="clear">Clear</button>
+                <button id="random">Random</button>
+            </div>
+
+
+            <div>
+                <label for="length">Point Count</label>
+                <input type="range" id="length" min="10" max="1000"/>
+                <output></output>
+            </div>
+            <div>
+                <label for="fps">Speed</label>
+                <input type="range" id="fps" min="1" max="300"/>
+                <output></output>
+            </div>
+            <div>
+                <label for="canvas-length">Canvas Size</label>
+                <input type="range" id="canvas-length" min="100" max="1500"/>
+                <output></output>
+            </div>
+            <div style="margin-top: 24px">
+                Example Patterns:
+                <div id="patterns">
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div style="margin-top: 50px">
-<button id="restart">Restart</button>
-<button id="start">Start</button>
-<button id="stop">Stop</button>
-</div>
+
+<script src="RLE.js"></script>
+<script src="patterns.js"></script>
+<script src="states.js"></script>
 <script src="utils.js"></script>
 <script src="index.js"></script>
 </body>
 <style>
-    button{
-        padding: 24px;
-        font-size: 24px;
+    #patterns {
+        max-width: 300px;
+        border: 1px solid #ddd;
+        max-height: 600px;
+        overflow: scroll;
+    }
+
+    #patterns > div {
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+
+    #patterns > div + div {
+        border-top: 1px solid #ddd
+    }
+
+    #patterns > div:hover {
+        background: #e3e3e3;
+    }
+
+    #patterns > div:active {
+        background: #ddd;
+    }
+
+    button {
+        margin-bottom: 8px;
+        margin-right: 8px;
+    }
+
+    /*button, input {*/
+    /*    padding: 24px;*/
+    /*    font-size: 24px;*/
+    /*}*/
+
+    label {
+        margin-top: 12px;
+        display: block;
+        /*font-size: 24px;*/
     }
 </style>
 </html>

@@ -1,4 +1,6 @@
 'use strict';
+
+
 const getCoord = (i, length) => {
     return [i % length, Math.floor(i / length)]
 }
@@ -7,60 +9,45 @@ const getIndex = (coord, length) => {
     return (coord[1] * length) + coord[0]
 }
 
-const getNeighbours = (points, length) => {
+const getNeighbours = (length) => {
     const neighbours = []
-    for (let i = 0; i < points.length; i++) {
+    for (let i = 0; i < length * length; i++) {
         const neigh = []
         const coord = getCoord(i, length)
         const x = coord[0]
         const y = coord[1]
 
         //top left
-        if (x > 0 && y > 0) {
-            neigh.push(getIndex([coord[0] - 1, coord[1] - 1], length))
-        }
+        neigh.push(getIndex([x > 0 ? coord[0] - 1 : length - 1, y > 0 ? coord[1] - 1 : length - 1], length))
         // top
-        if (y > 0) {
-            neigh.push(getIndex([coord[0], coord[1] - 1], length))
-        }
+        neigh.push(getIndex([coord[0], y > 0 ? coord[1] - 1 : length - 1], length))
         // top right
-        if (x < (length - 1) && y > 0) {
-            neigh.push(getIndex([coord[0] + 1, coord[1] - 1], length))
-        }
+        neigh.push(getIndex([x < (length - 1) ? coord[0] + 1 : 0, y > 0 ? coord[1] - 1 : length - 1], length))
         // left
-        if (x > 0) {
-            neigh.push(getIndex([coord[0] - 1, coord[1]], length))
-        }
+        neigh.push(getIndex([x > 0 ? coord[0] - 1 : length - 1, coord[1]], length))
         // right
-        if (x < length - 1) {
-            neigh.push(getIndex([coord[0] + 1, coord[1]], length))
-        }
+        neigh.push(getIndex([(x < length - 1) ? coord[0] + 1 : 0, coord[1]], length))
         // bottom left
-        if (x > 0 && y < (length - 1)) {
-            neigh.push(getIndex([coord[0] - 1, coord[1] + 1], length))
-        }
+        neigh.push(getIndex([x > 0 ? coord[0] - 1 : length - 1, y < (length - 1) ? coord[1] + 1 : 0], length))
         // bottom
-        if (y < (length - 1)) {
-            neigh.push(getIndex([coord[0], coord[1] + 1], length))
-        }
+        neigh.push(getIndex([coord[0], y < (length - 1) ? coord[1] + 1 : 0], length))
         // bottom right
-        if (x < (length - 1) && y < (length - 1)) {
-            neigh.push(getIndex([coord[0] + 1, coord[1] + 1], length))
-        }
+        neigh.push(getIndex([x < (length - 1) ? coord[0] + 1 : 0, y < (length - 1) ? coord[1] + 1 : 0], length))
+
         neighbours.push(neigh)
     }
     return neighbours
 
 }
 
-const populateRandomly = (states, probability) => {
-    for (let i = 0; i < states.length; i++) {
-        states [i] = Math.random() > probability
+const populateRandomly = (states, length, probability) => {
+    for (let i = 0; i < length; i++) {
+        states.set(i, Math.random() < probability ? 1 : 0)
     }
 };
 
-const generatePoints = (length) => {
-    return Array(length * length).fill(false)
+const generateStates = (length) => {
+    return new States(length);
 }
 
 const applyConwayRule = (state, aliveCount) => {
@@ -70,28 +57,88 @@ const applyConwayRule = (state, aliveCount) => {
         //Any live cell with two or three live neighbours lives on to the next generation.
         //Any live cell with more than three live neighbours dies, as if by overpopulation.
         if ((aliveCount < 2) || (aliveCount >= 4)) {
-            result = false
+            result = 0
         }
     } else { //if dead
         //Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
         if (aliveCount === 3) {
-            result = true
+            result = 1
         }
     }
     return result
 }
 
 
-const drawSquare = (ctx, data, buf, x1, y1, length) => {
-    //https://stackoverflow.com/questions/58482163/how-to-improve-html-canvas-performance-drawing-pixels
-    var i = 0;
-    const x2 = x1 + length
-    const y2 = y1 + length
-    for (var y = 0; y < 600; y++)
-        for (var x = 0; x < 600; x++) {
-            var d1 = (Math.sqrt((x - x1) * (x - x1) + (y - y1) * (y - y1)) / 10) & 1;
-            var d2 = (Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2)) / 10) & 1;
-            buf[i++] = d1 == d2 ? 0xFF000000 : 0xFFFFFFFF;
+const getCursorPosition = (canvas, event) => {
+    const rect = canvas.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    return [x, y]
+}
+
+const trim = (str, ch) => {
+    var start = 0,
+        end = str.length;
+
+    while (start < end && str[start] === ch)
+        ++start;
+
+    while (end > start && str[end - 1] === ch)
+        --end;
+
+    return (start > 0 || end < str.length) ? str.substring(start, end) : str;
+}
+
+
+const loadPattern = (patternString, states) => {
+    const pattern = rle.decode(patternString)
+    let x = 0
+    let y = 0
+    for (const char of pattern) {
+
+        if (char === '$') {
+            y++
+            x = 0
         }
-    // ctx.putImageData(data, 0, 0);
+        if (char === '!') {
+            break
+        }
+        if (char === 'b') {
+            x++
+        }
+        if (char === 'o') {
+            x++
+        }
+
+    }
+
+    const patternStart = [Math.floor((length / 2) - (x / 2)), Math.floor((length / 2) - (y / 2))]
+    let initialX = patternStart[0]
+    x = patternStart[0]
+    y = patternStart[1]
+    for (const char of pattern) {
+        let coord = [x, y];
+
+        if (char === '$') {
+            y++
+            x = initialX
+            continue
+        }
+        if (char === '!') {
+            break
+        }
+        if (char === 'b') {
+            states.set(getIndex(coord, length), 0)
+            x++
+            continue
+        }
+        if (char === 'o') {
+            states.set(getIndex(coord, length), 1)
+            x++
+            console.log(coord)
+            continue
+        }
+
+    }
+
 }
