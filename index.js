@@ -16,10 +16,10 @@ let pausedText = 'paused';
 let runningText = 'running';
 
 const rle = new RLE()
-let length = 100
+let length = 500
 let size = length * length
 let fps = 500
-let canvasLength = 1000;
+let canvasLength = 500;
 let states
 let adjacents
 let unitLength;
@@ -210,7 +210,7 @@ const animate = () => {
         then = now - (elapsed % fpsInterval);
 
         nextStep()
-        draw(true)
+        draw()
 
         calculateActualFps()
 

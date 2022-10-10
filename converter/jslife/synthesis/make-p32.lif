@@ -1,7 +1,10 @@
 #CJS, MM
 #CApr 2010
 x = 89, y = 109, rule = B3/S23
-10bo67bo$bobo7boo63boo7bobo$bboo6boo65boo6boo$bbo83bo3$12bobo59bobo$
+10bo67bo$bobo7boo63boo7bobo$
+bboo6boo65boo6boo$
+bbo83bo
+3$12bobo59bobo$
 13boo59boo$13bo61bo5$67bo$65boo$66boo3$7bo$8bo$6b3o5$71bo$26bo44bobo$
 24bobo44boo$25boo10bo$35bobo48bobo$36boo48boo$70bo5bo10bo$70bobobbo$
 70boo3b3o$82bobo$82boo$83bo6$75bo$65bo8bo$64bo9b3o$64b3o3$46bo$46bobo

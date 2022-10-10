@@ -92,6 +92,8 @@ const trim = (str, ch) => {
 
 const loadPattern = (patternString, states) => {
     const pattern = rle.decode(patternString)
+    console.log(pattern.join(""))
+    console.log(pattern)
     let x = 0
     let y = 0
     for (const char of pattern) {
@@ -130,13 +132,10 @@ const loadPattern = (patternString, states) => {
         if (char === 'b') {
             states.set(getIndex(coord, length), 0)
             x++
-            continue
         }
         if (char === 'o') {
             states.set(getIndex(coord, length), 1)
             x++
-            console.log(coord)
-            continue
         }
 
     }
